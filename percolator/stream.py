@@ -1,7 +1,9 @@
 import os
 
 class Stream(object):
-    def __init__(self):
+    def __init__(self, event):
+        self.__event = event
+
         self.__out_descriptor = None
         self.__in_descriptor = None
 
