@@ -1,6 +1,6 @@
 import unittest
 
-import test_percolator
+from test_runner import TestRunner
 
 if __name__ == '__main__':
     unittest.main()
