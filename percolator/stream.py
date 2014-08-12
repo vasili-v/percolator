@@ -1,21 +1,24 @@
 import os
-import threading
+import fcntl
+import select
+import errno
 
 class Stream(object):
-    def __init__(self, event):
-        self.__event = event
-
-        self.__thread = None
+    def __init__(self):
         self.__out_descriptor = None
+        self.__out = None
         self.__in_descriptor = None
 
-    def __clean(self):
-        self.__thread = None
+    def clean(self):
         try:
-            os.close(self.__out_descriptor)
+            self.__out.close()
         except:
-            pass
+            try:
+                os.close(self.__out_descriptor)
+            except:
+                pass
         self.__out_descriptor = None
+        self.__out = None
 
         try:
             os.close(self.__in_descriptor)
@@ -23,29 +26,66 @@ class Stream(object):
             pass
         self.__in_descriptor = None
 
-    def __source(self):
-        while not self.__event.is_set():
-            self.__event.wait(.1)
-
-    def __start(self):
-        self.__thread = threading.Thread(None, self.__source)
-        self.__thread.start()
+    @staticmethod
+    def __prepare_descriptor(descriptor):
+        flags = fcntl.fcntl(descriptor, fcntl.F_GETFL)
+        fcntl.fcntl(descriptor, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+        return os.fdopen(descriptor)
 
     def get_descriptor(self):
-        if self.__out_descriptor is None:
-            self.__clean()
+        if self.__in_descriptor is None:
+            self.clean()
             try:
                 self.__out_descriptor, self.__in_descriptor = os.openpty()
-                self.__start()
+                self.__out = self.__prepare_descriptor(self.__out_descriptor)
             except:
-                self.__clean()
+                self.clean()
                 raise
 
-        return self.__out_descriptor
+        return self.__in_descriptor
 
-    def stop(self):
+    def register(self, streams):
+        streams[self.__out_descriptor] = self
+
+    def process(self):
         try:
-            self.__thread.join()
-        except:
-            pass
-        self.__clean()
+            self.__out.read()
+        except IOError as error:
+            if error.errno != errno.EAGAIN:
+                raise
+
+class Streams(object):
+    def __init__(self, timeout=.1):
+        self.__timeout = timeout
+
+        self.__stdout = Stream()
+        self.__stderr = Stream()
+
+        self.__streams = {}
+        self.__descriptors = []
+
+    def clean(self):
+        self.__streams = {}
+        self.__descriptors = []
+
+        self.__stdout.clean()
+        self.__stderr.clean()
+
+    def get_descriptors(self):
+        stdout = self.__stdout.get_descriptor()
+        self.__stdout.register(self.__streams)
+
+        stderr = self.__stderr.get_descriptor()
+        self.__stderr.register(self.__streams)
+
+        self.__descriptors = list(self.__streams)
+
+        return stdout, stderr
+
+    def __wait_for_descriptors(self):
+        return select.select(self.__descriptors, [], [], self.__timeout)[0]
+
+    def process(self):
+        for descriptor in self.__wait_for_descriptors():
+            self.__streams[descriptor].process()
+

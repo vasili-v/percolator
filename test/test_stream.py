@@ -1,50 +1,86 @@
 import unittest
-import threading
+import errno
 
-from percolator.stream import Stream
+from percolator.stream import Stream, Streams
 
 class TestStream(unittest.TestCase):
-    def setUp(self):
-        self.event = threading.Event()
-        self.event.clear()
-
-    def tearDown(self):
-        if hasattr(self, 'event'):
-            self.event.set()
-
-        if hasattr(self, 'stream'):
-            self.stream.stop()
-            del self.stream
-
-        if hasattr(self, 'event'):
-            del self.event
-
     def test_creation(self):
-        Stream(None)
+        Stream()
 
     def test_get_descriptor(self):
-        self.stream = Stream(self.event)
-        self.assertTrue(isinstance(self.stream.get_descriptor(), (int, long)))
+        stream = Stream()
+        self.assertTrue(isinstance(stream.get_descriptor(), (int, long)))
 
     def test_get_descriptor_exception(self):
-        self.stream = Stream(self.event)
+        stream = Stream()
 
-        def exception_start():
+        def exception_func():
             raise Exception()
 
-        self.stream._Stream__start = exception_start
-        self.assertRaises(Exception, self.stream.get_descriptor)
+        stream._Stream__prepare_descriptor = exception_func
+        self.assertRaises(Exception, stream.get_descriptor)
 
     def test_get_descriptor_twice(self):
-        self.stream = Stream(self.event)
-        descriptor = self.stream.get_descriptor()
-        self.assertEqual(self.stream.get_descriptor(), descriptor)
+        stream = Stream()
+        descriptor = stream.get_descriptor()
+        self.assertEqual(stream.get_descriptor(), descriptor)
 
-    def test_stop(self):
-        self.stream = Stream(self.event)
-        self.stream.get_descriptor()
-        self.event.set()
-        self.stream.stop()
+    def test_clean(self):
+        stream = Stream()
+        stream.get_descriptor()
+        stream.clean()
+
+    def test_register(self):
+        stream = Stream()
+        descriptor = stream.get_descriptor()
+        streams = {}
+        stream.register(streams)
+        self.assertEqual(list(streams.itervalues()), [stream])
+
+    def test_process(self):
+        stream = Stream()
+        descriptor = stream.get_descriptor()
+        stream.process()
+
+    def test_process_exception(self):
+        stream = Stream()
+
+        class ExceptionFile(object):
+            def read(self):
+                raise IOError(errno.EIO, 'Test error')
+
+        stream._Stream__out = ExceptionFile()
+        self.assertRaises(Exception, stream.process)
+
+class TestStreams(unittest.TestCase):
+    def test_creation(self):
+        Streams()
+
+    def test_get_descriptors(self):
+        streams = Streams()
+        stdout, stderr = streams.get_descriptors()
+        self.assertTrue(isinstance(stdout, (int, long)))
+        self.assertTrue(isinstance(stderr, (int, long)))
+
+    def test_clean(self):
+        streams = Streams()
+        streams.get_descriptors()
+        streams.clean()
+
+    def test_process(self):
+        streams = Streams()
+        streams.get_descriptors()
+        streams.process()
+
+    def test_process_all_descriptors(self):
+        streams = Streams()
+        streams.get_descriptors()
+
+        def descriptors():
+            return streams._Streams__descriptors
+        streams._Streams__wait_for_descriptors = descriptors
+
+        streams.process()
 
 if __name__ == '__main__':
     unittest.main()

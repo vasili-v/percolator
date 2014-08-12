@@ -1,30 +1,23 @@
 import subprocess
-import threading
 
-from percolator.stream import Stream
+from percolator.stream import Streams
 
 class Runner(object):
     def __init__(self, environment=None):
         self.__environment = dict(environment) if environment else {}
 
-        self.__event = threading.Event()
-
-        self.__stdout = Stream(self.__event)
-        self.__stderr = Stream(self.__event)
+        self.__streams = Streams()
 
     def run(self, command):
-        self.__event.clear()
         try:
-            stdout = self.__stdout.get_descriptor()
-            stderr = self.__stderr.get_descriptor()
-
+            stdout, stderr = self.__streams.get_descriptors()
             process = subprocess.Popen(command, stdout=stdout, stderr=stderr,
                                        env=self.__environment)
-            return process.wait()
+            while True:
+                self.__streams.process()
+                if process.poll() is not None:
+                    return process.returncode
 
         finally:
-            self.__event.set()
-
-            self.__stdout.stop()
-            self.__stderr.stop()
+            self.__streams.clean()
 
