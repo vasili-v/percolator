@@ -6,5 +6,5 @@ setup(name='Percolator',
       author='Vasili Vasilyeu',
       author_email='vasili.v@tut.by',
       url='https://github.com/vasili-v/percolator',
-      packages=['percolator'])
+      packages=['percolator', 'percolator.parsers'])
 
