@@ -47,7 +47,7 @@ class Stream(object):
         fcntl.fcntl(descriptor, fcntl.F_SETFL, flags | os.O_NONBLOCK)
         return os.fdopen(descriptor)
 
-    def get_descriptor(self, other=None):
+    def begin(self, other=None):
         if self.__same_parser(other):
             return subprocess.STDOUT
 

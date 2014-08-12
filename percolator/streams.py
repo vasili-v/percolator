@@ -19,11 +19,11 @@ class Streams(object):
         self.__stdout.clean()
         self.__stderr.clean()
 
-    def get_descriptors(self):
-        stdout = self.__stdout.get_descriptor()
+    def begin(self):
+        stdout = self.__stdout.begin()
         self.__stdout.register(self.__streams)
 
-        stderr = self.__stderr.get_descriptor(self.__stdout)
+        stderr = self.__stderr.begin(self.__stdout)
         self.__stderr.register(self.__streams, self.__stdout)
 
         self.__descriptors = list(self.__streams)

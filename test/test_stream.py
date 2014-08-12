@@ -9,41 +9,40 @@ class TestStream(unittest.TestCase):
     def test_creation(self):
         Stream()
 
-    def test_get_descriptor(self):
+    def test_begin(self):
         stream = Stream()
-        self.assertTrue(isinstance(stream.get_descriptor(), (int, long)))
+        self.assertTrue(isinstance(stream.begin(), (int, long)))
 
-    def test_get_descriptor_exception(self):
+    def test_begin_exception(self):
         stream = Stream()
 
         def exception_func():
             raise Exception()
 
         stream._Stream__prepare_descriptor = exception_func
-        self.assertRaises(Exception, stream.get_descriptor)
+        self.assertRaises(Exception, stream.begin)
 
-    def test_get_descriptor_twice(self):
+    def test_begin_twice(self):
         stream = Stream()
-        descriptor = stream.get_descriptor()
-        self.assertEqual(stream.get_descriptor(), descriptor)
+        descriptor = stream.begin()
+        self.assertEqual(stream.begin(), descriptor)
 
-    def test_get_descriptor_same_parser(self):
+    def test_begin_same_parser(self):
         null = Null()
 
         first_stream = Stream(null)
         second_stream = Stream(null)
 
-        self.assertEqual(second_stream.get_descriptor(first_stream),
-                         subprocess.STDOUT)
+        self.assertEqual(second_stream.begin(first_stream), subprocess.STDOUT)
 
     def test_clean(self):
         stream = Stream()
-        stream.get_descriptor()
+        stream.begin()
         stream.clean()
 
     def test_register(self):
         stream = Stream()
-        descriptor = stream.get_descriptor()
+        descriptor = stream.begin()
         streams = {}
         stream.register(streams)
         self.assertEqual(list(streams.itervalues()), [stream])
@@ -61,7 +60,7 @@ class TestStream(unittest.TestCase):
 
     def test_process(self):
         stream = Stream()
-        descriptor = stream.get_descriptor()
+        descriptor = stream.begin()
         stream.process()
 
     def test_process_exception(self):

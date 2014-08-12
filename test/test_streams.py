@@ -7,25 +7,25 @@ class TestStreams(unittest.TestCase):
     def test_creation(self):
         Streams()
 
-    def test_get_descriptors(self):
+    def test_begin(self):
         streams = Streams()
-        stdout, stderr = streams.get_descriptors()
+        stdout, stderr = streams.begin()
         self.assertTrue(isinstance(stdout, (int, long)))
         self.assertTrue(isinstance(stderr, (int, long)))
 
     def test_clean(self):
         streams = Streams()
-        streams.get_descriptors()
+        streams.begin()
         streams.clean()
 
     def test_process(self):
         streams = Streams()
-        streams.get_descriptors()
+        streams.begin()
         streams.process()
 
     def test_process_all_descriptors(self):
         streams = Streams()
-        streams.get_descriptors()
+        streams.begin()
 
         def descriptors():
             return streams._Streams__descriptors

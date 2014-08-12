@@ -10,7 +10,7 @@ class Runner(object):
 
     def run(self, command):
         try:
-            stdout, stderr = self.__streams.get_descriptors()
+            stdout, stderr = self.__streams.begin()
             process = subprocess.Popen(command, stdout=stdout, stderr=stderr,
                                        env=self.__environment)
             while True:
