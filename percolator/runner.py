@@ -1,6 +1,6 @@
 import subprocess
 
-from percolator.stream import Streams
+from percolator.streams import Streams
 
 class Runner(object):
     def __init__(self, environment=None):
