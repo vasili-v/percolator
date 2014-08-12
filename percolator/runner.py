@@ -3,10 +3,10 @@ import subprocess
 from percolator.streams import Streams
 
 class Runner(object):
-    def __init__(self, environment=None):
+    def __init__(self, stdout=None, stderr=None, environment=None):
         self.__environment = dict(environment) if environment else {}
 
-        self.__streams = Streams()
+        self.__streams = Streams(stdout, stderr)
 
     def run(self, command):
         try:

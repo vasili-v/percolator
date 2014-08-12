@@ -3,11 +3,11 @@ import select
 from percolator.stream import Stream
 
 class Streams(object):
-    def __init__(self, timeout=.1):
+    def __init__(self, stdout=None, stderr=None, timeout=.1):
         self.__timeout = timeout
 
-        self.__stdout = Stream()
-        self.__stderr = Stream()
+        self.__stdout = Stream(stdout)
+        self.__stderr = Stream(stderr)
 
         self.__streams = {}
         self.__descriptors = []
@@ -23,8 +23,8 @@ class Streams(object):
         stdout = self.__stdout.get_descriptor()
         self.__stdout.register(self.__streams)
 
-        stderr = self.__stderr.get_descriptor()
-        self.__stderr.register(self.__streams)
+        stderr = self.__stderr.get_descriptor(self.__stdout)
+        self.__stderr.register(self.__streams, self.__stdout)
 
         self.__descriptors = list(self.__streams)
 

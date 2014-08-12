@@ -1,7 +1,9 @@
 import unittest
 import errno
+import subprocess
 
 from percolator.stream import Stream
+from percolator.parsers.null import Null
 
 class TestStream(unittest.TestCase):
     def test_creation(self):
@@ -25,6 +27,15 @@ class TestStream(unittest.TestCase):
         descriptor = stream.get_descriptor()
         self.assertEqual(stream.get_descriptor(), descriptor)
 
+    def test_get_descriptor_same_parser(self):
+        null = Null()
+
+        first_stream = Stream(null)
+        second_stream = Stream(null)
+
+        self.assertEqual(second_stream.get_descriptor(first_stream),
+                         subprocess.STDOUT)
+
     def test_clean(self):
         stream = Stream()
         stream.get_descriptor()
@@ -36,6 +47,17 @@ class TestStream(unittest.TestCase):
         streams = {}
         stream.register(streams)
         self.assertEqual(list(streams.itervalues()), [stream])
+
+    def test_register_same_parser(self):
+        null = Null()
+
+        first_stream = Stream(null)
+        second_stream = Stream(null)
+
+        streams = {}
+        second_stream.register(streams, first_stream)
+
+        self.assertEqual(streams, {})
 
     def test_process(self):
         stream = Stream()
@@ -51,6 +73,16 @@ class TestStream(unittest.TestCase):
 
         stream._Stream__out = ExceptionFile()
         self.assertRaises(Exception, stream.process)
+
+    def test_process_data(self):
+        stream = Stream()
+
+        class TestFile(object):
+            def read(self):
+                return 'test data'
+
+        stream._Stream__out = TestFile()
+        stream.process()
 
 if __name__ == '__main__':
     unittest.main()

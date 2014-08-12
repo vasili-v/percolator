@@ -7,7 +7,7 @@ class TestRunner(unittest.TestCase):
         Runner()
 
     def test_creation_environment(self):
-        Runner({'PATH': '/home'})
+        Runner(None, None, {'PATH': '/home'})
 
     def test_run(self):
         runner = Runner()
