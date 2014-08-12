@@ -9,6 +9,10 @@ class TestRunner(unittest.TestCase):
     def test_creation_environment(self):
         Runner({'PATH': '/home'})
 
+    def test_run(self):
+        runner = Runner()
+        self.assertEqual(runner.run(['echo']), 0)
+
 if __name__ == '__main__':
     unittest.main()
 
