@@ -16,6 +16,7 @@ class Runner(object):
             while True:
                 self.__streams.process()
                 if process.poll() is not None:
+                    self.__streams.finalize()
                     return process.returncode
 
         finally:

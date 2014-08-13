@@ -5,6 +5,7 @@ from test_stream import TestStream
 from test_streams import TestStreams
 from test_parsers_base import TestParsersBase
 from test_parsers_null import TestParsersNull
+from test_parsers_splitter import TestParsersSplitter
 
 if __name__ == '__main__':
     unittest.main()

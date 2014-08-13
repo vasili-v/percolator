@@ -10,7 +10,8 @@ class TestParsersNull(unittest.TestCase):
     def test_parse(self):
         null = Null()
         parse = null.start
-        self.assertEqual(parse(None), parse)
+        self.assertEqual(parse('test data'), parse)
+        self.assertEqual(parse(), parse)
 
 if __name__ == '__main__':
     unittest.main()

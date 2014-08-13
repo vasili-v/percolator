@@ -37,3 +37,7 @@ class Streams(object):
         for descriptor in self.__wait_for_descriptors():
             self.__streams[descriptor].process()
 
+    def finalize(self):
+        for stream in self.__streams.itervalues():
+            stream.finalize()
+

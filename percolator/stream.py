@@ -80,3 +80,5 @@ class Stream(object):
         if data:
             self.__parse = self.__parse(data)
 
+    def finalize(self):
+        self.__parse = self.__parse()
