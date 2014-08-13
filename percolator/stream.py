@@ -69,6 +69,11 @@ class Stream(object):
 
         streams[self.__out_descriptor] = self
 
+    def parse(self, data=None):
+        parse = self.__parse(data)
+        if parse:
+            self.__parse = parse
+
     def process(self):
         data = None
         try:
@@ -78,7 +83,5 @@ class Stream(object):
                 raise
 
         if data:
-            self.__parse = self.__parse(data)
+            self.parse(data)
 
-    def finalize(self):
-        self.__parse = self.__parse()

@@ -5,5 +5,5 @@ class Null(Base):
         super(Null, self).__init__(self.__parse)
 
     def __parse(self, data=None):
-        return self.__parse
+        pass
 

@@ -3,6 +3,7 @@ import errno
 import subprocess
 
 from percolator.stream import Stream
+from percolator.parsers.base import Base
 from percolator.parsers.null import Null
 
 class TestStream(unittest.TestCase):
@@ -57,6 +58,17 @@ class TestStream(unittest.TestCase):
         second_stream.register(streams, first_stream)
 
         self.assertEqual(streams, {})
+
+    def test_parse(self):
+        class TestParser(Base):
+            def __init__(self):
+                super(TestParser, self).__init__(self.__parse)
+
+            def __parse(self, data):
+                return self.__parse
+
+        stream = Stream(TestParser())
+        stream.parse()
 
     def test_process(self):
         stream = Stream()

@@ -28,9 +28,9 @@ class TestParsersSplitter(unittest.TestCase):
         test_parser = TestParser()
         parse = test_parser.start
         test_parser.reset()
-        self.assertEqual(parse('xxx\nyy'), parse)
-        self.assertEqual(parse('y\nzzz'), parse)
-        self.assertEqual(parse(), parse)
+        parse('xxx\nyy')
+        parse('y\r\nzzz')
+        parse()
         self.assertEqual(test_parser.lines, ['xxx', 'yyy', 'zzz'])
 
     def test_reset(self):
@@ -47,9 +47,9 @@ class TestParsersSplitter(unittest.TestCase):
         test_parser = TestParser()
         parse = test_parser.start
         test_parser.reset()
-        self.assertEqual(parse('xxx\nyyy'), parse)
+        parse('xxx\nyyy')
         test_parser.reset()
-        self.assertEqual(parse('zzz\nyyy'), parse)
+        parse('zzz\nyyy')
         self.assertEqual(test_parser.lines, ['xxx', 'zzz'])
 
 if __name__ == '__main__':

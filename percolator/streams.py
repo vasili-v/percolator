@@ -39,5 +39,5 @@ class Streams(object):
 
     def finalize(self):
         for stream in self.__streams.itervalues():
-            stream.finalize()
+            stream.parse()
 
