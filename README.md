@@ -18,11 +18,9 @@ python setup.py install
 Test
 ----
 
-python test/test.py
+python setup.py test
 
 Coverage
 --------
 
-coverage run --source="${SITEPACKAGES}"/percolator test/test.py
-
-coverage report -m
+python setup.py test -c
