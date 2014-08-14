@@ -23,4 +23,6 @@ python setup.py test
 Coverage
 --------
 
+Require coverage package
+
 python setup.py test -c
