@@ -1,3 +1,3 @@
 include README.md LICENSE MANIFEST.in
-recursive-include *.py
+recursive-include test *.py
 prune build
