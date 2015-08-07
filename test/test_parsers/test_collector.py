@@ -25,6 +25,8 @@ class TestParsersCollector(unittest.TestCase):
         collector.reset()
         self.assertEqual(collector.items, [])
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestParsersCollector)
+
 if __name__ == '__main__':
     unittest.main()
 

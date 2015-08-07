@@ -1,5 +1,4 @@
-from distutils.core import setup
-from distcovery.test import Test
+from setuptools import setup, find_packages
 
 setup(name='Percolator',
       version='0.0.1',
@@ -11,8 +10,7 @@ setup(name='Percolator',
       author='Vasili Vasilyeu',
       author_email='vasili.v@tut.by',
       url='https://github.com/vasili-v/percolator',
-      packages=['percolator', 'percolator.parsers'],
+      packages = find_packages(exclude=['test']),
       license='MIT',
       platforms=('Linux', 'Darwin'),
-      cmdclass={'test': Test})
-
+      test_suite = "test")

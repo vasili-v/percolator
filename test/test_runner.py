@@ -16,6 +16,8 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(runner.run(['printf', 'xxx\\nyyy\\nzzz']), 0)
         self.assertEqual(collector.items, ['xxx', 'yyy', 'zzz'])
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestRunner)
+
 if __name__ == '__main__':
     unittest.main()
 

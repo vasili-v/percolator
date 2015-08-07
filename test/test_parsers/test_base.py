@@ -11,6 +11,8 @@ class TestParsersBase(unittest.TestCase):
         base = Base('start')
         base.reset()
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestParsersBase)
+
 if __name__ == '__main__':
     unittest.main()
 

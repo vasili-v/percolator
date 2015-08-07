@@ -95,6 +95,8 @@ class TestStream(unittest.TestCase):
         stream._Stream__out = TestFile()
         stream.process()
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStream)
+
 if __name__ == '__main__':
     unittest.main()
 

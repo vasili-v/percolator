@@ -52,6 +52,8 @@ class TestParsersSplitter(unittest.TestCase):
         parse('zzz\nyyy')
         self.assertEqual(test_parser.lines, ['xxx', 'zzz'])
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestParsersSplitter)
+
 if __name__ == '__main__':
     unittest.main()
 

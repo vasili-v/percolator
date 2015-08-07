@@ -48,6 +48,8 @@ class TestParsersPrinter(unittest.TestCase):
         printer.start('xxx    \nyyy   ')
         self.assertEqual(stream.getvalue(), '7\n')
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestParsersPrinter)
+
 if __name__ == '__main__':
     unittest.main()
 

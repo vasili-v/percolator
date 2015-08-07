@@ -33,6 +33,8 @@ class TestStreams(unittest.TestCase):
 
         streams.process()
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStreams)
+
 if __name__ == '__main__':
     unittest.main()
 

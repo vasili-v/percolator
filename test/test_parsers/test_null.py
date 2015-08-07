@@ -13,6 +13,8 @@ class TestParsersNull(unittest.TestCase):
         parse('test data')
         parse()
 
+test_suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestParsersNull)
+
 if __name__ == '__main__':
     unittest.main()
 
