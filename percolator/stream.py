@@ -6,9 +6,8 @@ import subprocess
 from percolator.parsers.null import Null
 
 class Stream(object):
-    def __init__(self, parser=None):
-        self.__parser = parser if parser else Null()
-
+    def __init__(self, parser=Null):
+        self.__parser = parser
         self.__clean()
 
     def __clean(self):
@@ -33,24 +32,13 @@ class Stream(object):
 
         self.__clean()
 
-    def __same_parser(self, other):
-        try:
-            parser = other.__parser
-        except AttributeError:
-            return False
-
-        return self.__parser is parser
-
     @staticmethod
     def __prepare_descriptor(descriptor):
         flags = fcntl.fcntl(descriptor, fcntl.F_GETFL)
         fcntl.fcntl(descriptor, fcntl.F_SETFL, flags | os.O_NONBLOCK)
         return os.fdopen(descriptor)
 
-    def begin(self, other=None):
-        if self.__same_parser(other):
-            return subprocess.STDOUT
-
+    def begin(self):
         if self.__in_descriptor is None:
             self.clean()
             try:
@@ -61,13 +49,7 @@ class Stream(object):
                 self.clean()
                 raise
 
-        return self.__in_descriptor
-
-    def register(self, streams, other=None):
-        if self.__same_parser(other):
-            return
-
-        streams[self.__out_descriptor] = self
+        return self.__out_descriptor, self.__in_descriptor
 
     def parse(self, data=None):
         parse = self.__parse(data)

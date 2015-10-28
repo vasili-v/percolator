@@ -12,7 +12,9 @@ class TestStream(unittest.TestCase):
 
     def test_begin(self):
         stream = Stream()
-        self.assertTrue(isinstance(stream.begin(), (int, long)))
+        write_descriptor, read_descriptor = stream.begin()
+        self.assertTrue(isinstance(write_descriptor, (int, long)))
+        self.assertTrue(isinstance(read_descriptor, (int, long)))
 
     def test_begin_exception(self):
         stream = Stream()
@@ -28,36 +30,10 @@ class TestStream(unittest.TestCase):
         descriptor = stream.begin()
         self.assertEqual(stream.begin(), descriptor)
 
-    def test_begin_same_parser(self):
-        null = Null()
-
-        first_stream = Stream(null)
-        second_stream = Stream(null)
-
-        self.assertEqual(second_stream.begin(first_stream), subprocess.STDOUT)
-
     def test_clean(self):
         stream = Stream()
         stream.begin()
         stream.clean()
-
-    def test_register(self):
-        stream = Stream()
-        descriptor = stream.begin()
-        streams = {}
-        stream.register(streams)
-        self.assertEqual(list(streams.itervalues()), [stream])
-
-    def test_register_same_parser(self):
-        null = Null()
-
-        first_stream = Stream(null)
-        second_stream = Stream(null)
-
-        streams = {}
-        second_stream.register(streams, first_stream)
-
-        self.assertEqual(streams, {})
 
     def test_parse(self):
         class TestParser(Base):

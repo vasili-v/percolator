@@ -1,6 +1,7 @@
 import unittest
 import errno
 
+from percolator.parsers.base import Base
 from percolator.streams import Streams
 
 class TestStreams(unittest.TestCase):
@@ -9,6 +10,19 @@ class TestStreams(unittest.TestCase):
 
     def test_begin(self):
         streams = Streams()
+        stdout, stderr = streams.begin()
+        self.assertTrue(isinstance(stdout, (int, long)))
+        self.assertTrue(isinstance(stderr, (int, long)))
+
+    def test_begin_different_parsers(self):
+        class TestParser(Base):
+            def __init__(self):
+                super(TestParser, self).__init__(self.__parse)
+
+            def __parse(self, data=None):
+                pass
+
+        streams = Streams(TestParser(), TestParser())
         stdout, stderr = streams.begin()
         self.assertTrue(isinstance(stdout, (int, long)))
         self.assertTrue(isinstance(stderr, (int, long)))

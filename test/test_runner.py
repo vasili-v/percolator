@@ -1,6 +1,7 @@
 import unittest
 
 from percolator.runner import Runner
+from percolator.parsers.null import Null
 from percolator.parsers.collector import Collector
 
 class TestRunner(unittest.TestCase):
@@ -8,7 +9,7 @@ class TestRunner(unittest.TestCase):
         Runner()
 
     def test_creation_environment(self):
-        Runner(None, None, {'PATH': '/home'})
+        Runner(Null, Null, {'PATH': '/home'})
 
     def test_run(self):
         collector = Collector()

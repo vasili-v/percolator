@@ -3,13 +3,8 @@ import unittest
 from percolator.parsers.null import Null
 
 class TestParsersNull(unittest.TestCase):
-    def test_creation(self):
-        null = Null()
-        self.assertTrue(callable(null.start))
-
     def test_parse(self):
-        null = Null()
-        parse = null.start
+        parse = Null.start
         parse('test data')
         parse()
 
