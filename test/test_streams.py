@@ -1,18 +1,36 @@
 import unittest
 import errno
+import subprocess
 
 from percolator.parsers.base import Base
+from percolator.parsers.stdout import Stdout
 from percolator.streams import Streams
 
 class TestStreams(unittest.TestCase):
     def test_creation(self):
         Streams()
 
+    def test_creation_invalid_stdout_parser(self):
+        self.assertRaises(RuntimeError, Streams, Stdout)
+
     def test_begin(self):
         streams = Streams()
         stdout, stderr = streams.begin()
         self.assertTrue(isinstance(stdout, (int, long)))
-        self.assertTrue(isinstance(stderr, (int, long)))
+        self.assertEqual(stderr, subprocess.STDOUT)
+
+    def test_begin_with_stdout_parser(self):
+        class TestParser(Base):
+            def __init__(self):
+                super(TestParser, self).__init__(self.__parse)
+
+            def __parse(self, data=None):
+                pass
+
+        streams = Streams(TestParser(), Stdout)
+        stdout, stderr = streams.begin()
+        self.assertTrue(isinstance(stdout, (int, long)))
+        self.assertEqual(stderr, subprocess.STDOUT)
 
     def test_begin_different_parsers(self):
         class TestParser(Base):
@@ -26,6 +44,7 @@ class TestStreams(unittest.TestCase):
         stdout, stderr = streams.begin()
         self.assertTrue(isinstance(stdout, (int, long)))
         self.assertTrue(isinstance(stderr, (int, long)))
+        self.assertNotEqual(stdout, stderr)
 
     def test_clean(self):
         streams = Streams()

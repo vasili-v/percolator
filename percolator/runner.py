@@ -1,10 +1,11 @@
 import subprocess
 
 from percolator.parsers.null import Null
+from percolator.parsers.stdout import Stdout
 from percolator.streams import Streams
 
 class Runner(object):
-    def __init__(self, stdout=Null, stderr=Null, environment=None):
+    def __init__(self, stdout=Null, stderr=Stdout, environment=None):
         self.__environment = dict(environment) if environment else {}
 
         self.__streams = Streams(stdout, stderr)

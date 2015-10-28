@@ -2,14 +2,22 @@ import subprocess
 import select
 
 from percolator.parsers.null import Null
+from percolator.parsers.stdout import Stdout
 from percolator.stream import Stream
 
 class Streams(object):
-    def __init__(self, stdout=Null, stderr=Null, timeout=.1):
+    def __init__(self, stdout=Null, stderr=Stdout, timeout=.1):
         self.__timeout = timeout
 
+        if stdout is Stdout:
+            raise RuntimeError('Predefined parser "Stdout" can be only passed '
+                               'to stderr argument')
+
         self.__stdout = Stream(stdout)
-        self.__stderr = self.__stdout if stdout is stderr else Stream(stderr)
+        if stderr is Stdout or stderr is stdout:
+            self.__stderr = self.__stdout
+        else:
+            self.__stderr = Stream(stderr)
 
         self.__streams = {}
         self.__descriptors = []
