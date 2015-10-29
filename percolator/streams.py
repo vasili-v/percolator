@@ -3,7 +3,7 @@ import select
 
 from percolator.parsers.null import Null
 from percolator.parsers.stdout import Stdout
-from percolator.stream import Stream
+from percolator.stream import make_stream, RunnerStream
 
 class Streams(object):
     def __init__(self, stdout=Null, stderr=Stdout, timeout=.1):
@@ -13,11 +13,17 @@ class Streams(object):
             raise RuntimeError('Predefined parser "Stdout" can be only passed '
                                'to stderr argument')
 
-        self.__stdout = Stream(stdout)
+        self.__stdout = make_stream(stdout)
+        if isinstance(self.__stdout, RunnerStream):
+            raise NotImplementedError('Can\'t user Runner as stdout receiver')
+
         if stderr is Stdout or stderr is stdout:
             self.__stderr = self.__stdout
         else:
-            self.__stderr = Stream(stderr)
+            self.__stderr = make_stream(stderr)
+            if isinstance(self.__stderr, RunnerStream):
+                raise NotImplementedError('Can\'t user Runner as stderr ' \
+                                          'receiver')
 
         self.__streams = {}
         self.__descriptors = []

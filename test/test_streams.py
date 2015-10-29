@@ -5,6 +5,7 @@ import subprocess
 from percolator.parsers.base import Base
 from percolator.parsers.stdout import Stdout
 from percolator.streams import Streams
+from percolator.runner import Runner
 
 class TestStreams(unittest.TestCase):
     def test_creation(self):
@@ -12,6 +13,11 @@ class TestStreams(unittest.TestCase):
 
     def test_creation_invalid_stdout_parser(self):
         self.assertRaises(RuntimeError, Streams, Stdout)
+
+    def test_creation_not_implemented(self):
+        runner = Runner()
+        self.assertRaises(NotImplementedError, Streams, stdout=runner)
+        self.assertRaises(NotImplementedError, Streams, stderr=runner)
 
     def test_begin(self):
         streams = Streams()

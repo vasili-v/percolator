@@ -3,9 +3,10 @@ import fcntl
 import errno
 import subprocess
 
+from percolator.parsers.base import Base
 from percolator.parsers.null import Null
 
-class Stream(object):
+class ParserStream(object):
     def __init__(self, parser=Null):
         self.__parser = parser
         self.__clean()
@@ -67,3 +68,23 @@ class Stream(object):
         if data:
             self.parse(data)
 
+class RunnerStream(object):
+    def __init__(self, runner):
+        self.__runner = runner
+
+    def clean(self):
+        pass
+
+    def begin(self):
+        return None, subprocess.PIPE
+
+def make_stream(receiver):
+    if isinstance(receiver, Base):
+        return ParserStream(receiver)
+
+    from percolator.runner import Runner
+    if isinstance(receiver, Runner):
+        return RunnerStream(receiver)
+
+    raise RuntimeError('Can\'t redirect to %s. '
+                       'Receiver should be a parser or a runner' % repr(receiver))
